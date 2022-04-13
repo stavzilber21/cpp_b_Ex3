@@ -26,9 +26,7 @@ namespace zich {
         this->matrix = vector<double>(copy.matrix);
     }
 
-//    Matrix::~Matrix() {
-//        this->matrix.clear();
-//    }
+
 
     void check_matrix(int row1, int col1, int row2, int col2) {
         if (row1 < 1 || row2 < 1 || col1 < 1 || col2 < 1) {
@@ -260,32 +258,46 @@ namespace zich {
         int idx_row=0;
         int idx_col=0;
         string str;
-        char c=0;
-        while(c!='\n'){
-            c = in.get();
-            str+=c;
+        getline(in,str); //to get the input to str
+        str+='\n';
+        unsigned long i = 0;
+        if(str[0]!='[' || str[str.length()-2]!=']'){
+            throw runtime_error("The string is invalid");
         }
-        for (unsigned long i = 0; i < str.length(); i++) {
+        double d = 0;
+        string temp;
+        while(str[i]!='\n'){
             if(isdigit(str[i])!=0){
-                mat.push_back(int(str[i]));
+                while(isdigit(str[i])!=0 ){
+                    temp += str[i];
+                    i++;
+                }
+                d=stod(temp);
+                mat.push_back(d);
                 idx_col++;
             }
-            else if(str[i]==']'){
-                idx_col=0;  //we finish column
-            }
-            else if(str[i]=='['){
+            temp.clear();
+
+            if(str[i]=='['){
                 idx_row+=1;  //we add row and begin new row
             }
-            else if(str[i]!=',' && str[i]!=' '){
+            else if((str[i]==']') &&( i!= str.length()-2)){
+                idx_col=0;  //we finish column
+            }
+            else if((str[i]==' ' && str[i+1]==',')||(str[i]==',' && str[i+1]!=' ')){
                 throw runtime_error("The character is invalid");
             }
-            if(idx_col>mat1.col || idx_row>mat1.row){
-                throw runtime_error("Exceeding the matrix limits");
+            else if((str[i]==']' && str[i+1]!=',')&&(str[i]==']' && str[i+1]!='\n')){
+                throw runtime_error("The char is invalid");
             }
-
+            i++;
         }
-        if(mat.size()!=mat1.matrix.size()){
-            throw runtime_error("The quantities are not equal and this is an error");
+
+        const int bad =11;
+        for (unsigned long j = 0; j < mat.size(); ++j) {
+           if(mat[j]==bad){
+               throw runtime_error("not good");
+           }
         }
 
         mat1.matrix=mat;
@@ -293,4 +305,6 @@ namespace zich {
         mat1.col=idx_col;
         return in;
     }
+
+
 }
